@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} Browse Book Recommendations {% endblock %}
+
+{% block content %}
+<div>
+    Fill out this form, to get some recommendations on what to read next!
+    <form class="recommendation-form">
+        
+        <button type="submit" class="getbooks">Get Books!</button>
+    </form>
+    
+</div>
+
+<div class="recommendation-list">
+    <!-- This will become a loop over rec list and post <li> book title, maybe be a link to the book on amazon -->
+    <ul>
+        <li>first book rec</li>
+        <li>second book rec</li>
+        <li>third book rec</li>
+    </ul>
+</div>
+{% endblock %}
