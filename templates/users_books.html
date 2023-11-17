@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Your list of books:</h1>
+    {% for book in books %}
+        <ul>
+            <li>{{ book.title }}</li>
+        </ul>
+    {% endfor %}
+
+<button onclick="window.location.href='form'">Add another book you've read!</button>
+
+{% endblock %}

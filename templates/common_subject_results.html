@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Subjects you may like:</h1>
+    {% for subject in common_subject %}
+        <ul>
+            <li>{{ subject }}</li>
+        </ul>
+    {% endfor %}
+
+<button onclick="window.location.href='subjects'">Try Again</button>
+
+{% endblock %}
