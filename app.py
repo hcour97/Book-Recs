@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from sqlalchemy.exc import IntegrityError
 import pdb
 
-from forms import AddBookForm, CommonSubjectsForm
+from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm
 from models import db, connect_db, Book
 
 CURR_USER_KEY = "curr_user"
@@ -34,8 +34,31 @@ def get_subject(book_name):
     query_book = query_book.replace(' ', '+')
     resp = requests.get(f"https://openlibrary.org/search.json?title={query_book}")
     info = resp.json()
+    ## TO DO: THROW AN ERROR IF NO COMMON SUBJECTS
     subjects = info['docs'][0]['subject']
     return subjects
+
+def get_common_subjects(subj1, subj2):
+    set1 = set(subj1)
+    set2 = set(subj2)
+    common_subject = set1 & set2 ### finds the intersection... should be a list?
+    common_subject =list(common_subject)
+    common_subject.sort() 
+    return common_subject
+
+def get_books(subject_name):
+    query_subject = subject_name.lower()
+    query_subject = query_subject.replace(' ', '+')
+    resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
+    info = resp.json()
+    books = []
+    i = 0
+    while i <=5:
+        book = info['docs'][i]['title']
+        books.append(book)
+    return books
+
+######### ROUTES 
 
 @app.route("/", methods=["GET"])
 def homepage():
@@ -45,7 +68,7 @@ def homepage():
 
 @app.route("/form", methods=["GET", "POST"])
 def view_books():
-
+    """Form for user to add books to their read-list."""
     form = AddBookForm()
     if form.validate_on_submit():
         book = Book(title=form.title.data) # create with Book model
@@ -61,21 +84,35 @@ def view_books():
 
 @app.route("/subjects", methods=["GET", "POST"])
 def common_subjects():
+    """Form and results for user to find common subjects between 2 books."""
     form = CommonSubjectsForm()
     if form.validate_on_submit():
         book1 = form.title1.data
         book2 = form.title2.data
         subj1 = get_subject(book1)
         subj2 = get_subject(book2)
-        set1 = set(subj1)
-        set2 = set(subj2)
-        common_subject = set1 & set2 ### finds the intersection... should be a list?
-        common_subject =list(common_subject)
-        common_subject.sort() ## should order alphabetically
+        common_subject = get_common_subjects(subj1, subj2)
+        # set1 = set(subj1)
+        # set2 = set(subj2)
+        # common_subject = set1 & set2 ### finds the intersection... should be a list?
+        # common_subject =list(common_subject)
+        # common_subject.sort() ## should order alphabetically
         return render_template("common_subject_results.html", form=form, common_subject=common_subject)
     return render_template("common_subjects_form.html", form=form)
 
-# @app.route("/results", methods=["GET"])
-# @app.route subject_results():
-#     return render_template("common_subject_results.html", form=form, common_subject=common_subject)
+@app.route("/book-recs", methods=["GET", "POST"])
+def book_recommender():
+    """Form and results for user to receive book recommendations based off of two books they've read."""
+    form = BookRecommendationForm()
+    if form.validate_on_submit():
+        book1 = form.title1.data
+        book2 = form.title2.data
+        subj1 = get_subject(book1)
+        subj2 = get_subject(book2)
+        common_subject = get_common_subjects(subj1, subj2)
+        query_subject = common_subject[0]
+        bookrecs = get_books(query_subject)
+        return render_template("recommendation_results.html", form=form, bookrecs=bookrecs)
+    return render_template("recommendation_form.html", form=form)
+
 

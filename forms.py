@@ -14,3 +14,8 @@ class CommonSubjectsForm(FlaskForm):
     """Form for user to find common subjects between 2 books."""
     title1 = StringField("First Book Title", validators = [InputRequired()],)
     title2 = StringField("Second Book Title", validators = [InputRequired()],)
+
+class BookRecommendationForm(FlaskForm):
+    """Form for user to find common subjects between 2 books."""
+    title1 = StringField("First Book Title", validators = [InputRequired()],)
+    title2 = StringField("Second Book Title", validators = [InputRequired()],)
