@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from sqlalchemy.exc import IntegrityError
 import pdb
 
-from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm
+from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm, BookRecommendationBySubjectForm
 from models import db, connect_db, Book
 
 CURR_USER_KEY = "curr_user"
@@ -109,10 +109,46 @@ def book_recommender():
         book2 = form.title2.data
         subj1 = get_subject(book1)
         subj2 = get_subject(book2)
-        common_subject = get_common_subjects(subj1, subj2)
-        query_subject = common_subject[0]
-        bookrecs = get_books(query_subject)
-        return render_template("recommendation_results.html", form=form, bookrecs=bookrecs)
+        common_subjects = get_common_subjects(subj1, subj2)
+        subject = common_subjects[0]
+        query_subject = common_subjects[0].lower().replace(' ', '+')
+
+        resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
+        info = resp.json()
+        
+        books = []
+        i = 0
+        while i <=5:
+            book = info['docs'][i]['title']
+            books.append(book)
+            i+=1
+        
+        return render_template("recommendation_results.html", form=form, books=books, subject=subject)
     return render_template("recommendation_form.html", form=form)
 
+@app.route("/book-recs/subject", methods=["GET", "POST"])
+def book_recommender_subject():
+    """Form and results for book recommendation based on a subject."""
+    # Testing get_books function
+    form = BookRecommendationBySubjectForm()
+    if form.validate_on_submit():
+        subject_name = form.subject.data
+        query_subject = subject_name.lower()
+        query_subject = query_subject.replace(' ', '+')
+        resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
+        info = resp.json()
+        books = []
+        i = 0
+        while i <=5:
+            book = info['docs'][i]['title']
+            books.append(book)
+            i+=1
+        
+        # book=info['docs'][0]['title']
+        # author = info['docs'][0]['author_name'][0]
+    
+        # books = get_books(query_subject)
+        return render_template("rec_by_subject_results.html", books=books)
+    return render_template("rec_by_subject_form.html", form=form)
+    
 

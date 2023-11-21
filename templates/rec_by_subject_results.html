@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Books you may enjoy in {{ subject }}:</h1>
+<!-- <h2> You may enjoy {{ book }} by {{ author }} </h2> -->
+    {% for book in books %}
+        <ul>
+            <li>{{ book }}</li>
+        </ul>
+    {% endfor %}
+
+<button onclick="window.location.href='book-recs'">Try Again</button>
+
+{% endblock %}

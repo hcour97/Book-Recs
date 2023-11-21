@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Enter 2 books to get a recommendation:<h1></h1>
+<h1>Enter a subject you like, to get recommendations:<h1></h1>
 <form method="POST">
     {{ form.hidden_tag() }}
     {% for field in form
