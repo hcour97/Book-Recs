@@ -138,7 +138,7 @@ def book_recommender():
         
             return render_template("recommendation_results.html", form=form, books=books, subject=subject)
         except:
-            return "Sorry. No recommendations available."
+            return render_template("error_recommendations.html")
     return render_template("recommendation_form.html", form=form)
 
 @app.route("/book-recs/add/<int:book_id>", methods=["GET", "POST"])
