@@ -4,12 +4,11 @@
 
 <h1> Books you may enjoy:</h1>
     {% for book in books %}
-        <ul>
-            <li>{{ book }} <button>Add</button></li> 
-            <!-- add a button here -->
-        </ul>
+        <h4>
+            {{ book }} <a href="/book-recs/add/{{ book.id }}" class="btn btn-outline-success btn-sm">Add</a>
+        </h4>
     {% endfor %}
 
-<button onclick="window.location.href='subjects'">Try Again</button>
+<button onclick="window.location.href='book-recs'">Try Again</button>
 
 {% endblock %}

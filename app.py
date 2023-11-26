@@ -28,15 +28,20 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 connect_db(app)
 db.create_all()
 
-###### FUNCTIONS
+########################################
+############## FUNCTIONS ###############
+########################################
 def get_subject(book_name):
     query_book = book_name.lower()
     query_book = query_book.replace(' ', '+')
     resp = requests.get(f"https://openlibrary.org/search.json?title={query_book}")
     info = resp.json()
     ## TO DO: THROW AN ERROR IF NO COMMON SUBJECTS
-    subjects = info['docs'][0]['subject']
-    return subjects
+    try:
+        subjects = info['docs'][0]['subject']
+        return subjects
+    except:
+        return "sorry. no common subjects available."
 
 def get_common_subjects(subj1, subj2):
     set1 = set(subj1)
@@ -58,9 +63,9 @@ def get_books(subject_name):
         books.append(book)
     return books
 
-#################################
-######### ROUTES ################
-#################################
+########################################
+################ ROUTES ################
+########################################
 
 @app.route("/", methods=["GET"])
 def homepage():
@@ -115,22 +120,39 @@ def book_recommender():
         book2 = form.title2.data
         subj1 = get_subject(book1)
         subj2 = get_subject(book2)
-        common_subjects = get_common_subjects(subj1, subj2)
-        subject = common_subjects[0]
-        query_subject = common_subjects[0].lower().replace(' ', '+')
+        ### try to get a common subject, if it doesn't work, return an error. If it does, query the db.
+        try:
+            common_subjects = get_common_subjects(subj1, subj2)
+            subject = common_subjects[0]
+            query_subject = common_subjects[0].lower().replace(' ', '+')
 
-        resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
-        info = resp.json()
+            resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
+            info = resp.json()
         
-        books = []
-        i = 0
-        while i <=5:
-            book = info['docs'][i]['title']
-            books.append(book)
-            i+=1
+            books = []
+            i = 0
+            while i <=5:
+                book = info['docs'][i]['title']
+                books.append(book)
+                i+=1
         
-        return render_template("recommendation_results.html", form=form, books=books, subject=subject)
+            return render_template("recommendation_results.html", form=form, books=books, subject=subject)
+        except:
+            return "Sorry. No recommendations available."
     return render_template("recommendation_form.html", form=form)
+
+@app.route("/book-recs/add/<int:book_id>", methods=["GET", "POST"])
+def add_rec_book(book_id):
+    # need to create book with Book Model, then add to db
+    # how do I grab the text that is associated with that button???
+    # book_to_add = Book(title=title.data)
+    book_to_add = Book.query.get_or_404(book_id)
+    try:
+        db.session.add(book_to_add)
+        db.session.commit()
+        return redirect("/")
+    except:
+        return "Sorry. Cannot add that book."
 
 @app.route("/book-recs/subject", methods=["GET", "POST"])
 def book_recommender_subject():

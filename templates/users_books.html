@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1> Your list of books:</h1>
+<h1> Your Reading List:</h1>
     {% for book in books %}
     <h4>
         {{ book.title }} <a href="/delete/{{ book.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
