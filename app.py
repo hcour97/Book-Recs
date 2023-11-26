@@ -58,7 +58,9 @@ def get_books(subject_name):
         books.append(book)
     return books
 
-######### ROUTES 
+#################################
+######### ROUTES ################
+#################################
 
 @app.route("/", methods=["GET"])
 def homepage():
@@ -76,11 +78,20 @@ def view_books():
         db.session.add(book) # add book to session
         db.session.commit() # add to db
         
-
         ## not working
         flash(f"Success, ${book.title} was added to your list.", 'success') 
         return redirect('/')
     return render_template("add_book_form.html", form=form)
+
+@app.route('/delete/<int:book_id>', methods=["GET","POST"])
+def delete_book(book_id):
+    book_to_delete = Book.query.get_or_404(book_id)
+    try:
+        db.session.delete(book_to_delete)
+        db.session.commit()
+        return redirect("/")
+    except:
+        return "Sorry. Cannot delete that book."
 
 @app.route("/subjects", methods=["GET", "POST"])
 def common_subjects():
@@ -92,11 +103,6 @@ def common_subjects():
         subj1 = get_subject(book1)
         subj2 = get_subject(book2)
         common_subject = get_common_subjects(subj1, subj2)
-        # set1 = set(subj1)
-        # set2 = set(subj2)
-        # common_subject = set1 & set2 ### finds the intersection... should be a list?
-        # common_subject =list(common_subject)
-        # common_subject.sort() ## should order alphabetically
         return render_template("common_subject_results.html", form=form, common_subject=common_subject)
     return render_template("common_subjects_form.html", form=form)
 
@@ -150,5 +156,7 @@ def book_recommender_subject():
         # books = get_books(query_subject)
         return render_template("rec_by_subject_results.html", books=books)
     return render_template("rec_by_subject_form.html", form=form)
+
+
     
 

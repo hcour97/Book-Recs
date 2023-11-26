@@ -4,9 +4,10 @@
 
 <h1> Your list of books:</h1>
     {% for book in books %}
-        <ul>
-            <li>{{ book.title }}</li>
-        </ul>
+    <h4>
+        {{ book.title }} <a href="/delete/{{ book.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
+    </h4>
+
     {% endfor %}
 
 <button onclick="window.location.href='form'">Add another book you've read!</button><br>
