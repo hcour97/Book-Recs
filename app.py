@@ -98,19 +98,6 @@ def delete_book(book_id):
     except:
         return "Sorry. Cannot delete that book."
 
-@app.route("/subjects", methods=["GET", "POST"])
-def common_subjects():
-    """Form and results for user to find common subjects between 2 books."""
-    form = CommonSubjectsForm()
-    if form.validate_on_submit():
-        book1 = form.title1.data
-        book2 = form.title2.data
-        subj1 = get_subject(book1)
-        subj2 = get_subject(book2)
-        common_subject = get_common_subjects(subj1, subj2)
-        return render_template("common_subject_results.html", form=form, common_subject=common_subject)
-    return render_template("common_subjects_form.html", form=form)
-
 @app.route("/book-recs", methods=["GET", "POST"])
 def book_recommender():
     """Form and results for user to receive book recommendations based off of two books they've read."""
@@ -120,7 +107,7 @@ def book_recommender():
         book2 = form.title2.data
         subj1 = get_subject(book1)
         subj2 = get_subject(book2)
-        ### try to get a common subject, if it doesn't work, return an error. If it does, query the db.
+    
         try:
             common_subjects = get_common_subjects(subj1, subj2)
             subject = common_subjects[0]
@@ -132,8 +119,9 @@ def book_recommender():
             books = []
             i = 0
             while i <=5:
-                book = info['docs'][i]['title']
-                books.append(book)
+                book_title = info['docs'][i]['title']
+                # book = Book(title=book_title.data) ## not actually saving to the db.
+                books.append(book_title)
                 i+=1
         
             return render_template("recommendation_results.html", form=form, books=books, subject=subject)
@@ -141,43 +129,21 @@ def book_recommender():
             return render_template("error_recommendations.html")
     return render_template("recommendation_form.html", form=form)
 
-@app.route("/book-recs/add/<int:book_id>", methods=["GET", "POST"])
-def add_rec_book(book_id):
-    # need to create book with Book Model, then add to db
+@app.route("/book-recs/add", methods=["GET", "POST"])
+def add_rec_book():
     # how do I grab the text that is associated with that button???
-    # book_to_add = Book(title=title.data)
-    book_to_add = Book.query.get_or_404(book_id)
-    try:
+    book_title = request.form.get("book") # get the value of the radio button selected, returning "on" as book_title rn
+    print(book_title) # prints "on" as each book_title
+    book_to_add = Book(title=book_title) # create a book model
+
+    try: # add to db
         db.session.add(book_to_add)
         db.session.commit()
         return redirect("/")
     except:
         return "Sorry. Cannot add that book."
 
-@app.route("/book-recs/subject", methods=["GET", "POST"])
-def book_recommender_subject():
-    """Form and results for book recommendation based on a subject."""
-    # Testing get_books function
-    form = BookRecommendationBySubjectForm()
-    if form.validate_on_submit():
-        subject_name = form.subject.data
-        query_subject = subject_name.lower()
-        query_subject = query_subject.replace(' ', '+')
-        resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
-        info = resp.json()
-        books = []
-        i = 0
-        while i <=5:
-            book = info['docs'][i]['title']
-            books.append(book)
-            i+=1
-        
-        # book=info['docs'][0]['title']
-        # author = info['docs'][0]['author_name'][0]
-    
-        # books = get_books(query_subject)
-        return render_template("rec_by_subject_results.html", books=books)
-    return render_template("rec_by_subject_form.html", form=form)
+
 
 
     
