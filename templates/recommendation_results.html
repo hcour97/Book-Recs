@@ -13,7 +13,7 @@
 
     <form action="/book-recs/add" method="POST">
         {% for book in books %}
-            <input type="radio" id="book" name="book"> {{ book }} <br>
+            <input type="radio" id="{{ book }}"" value="{{ book }}"" name="book"> {{ book }}</input><br>
         {% endfor %}
             <!-- <input type="radio" id="book0" name="book"> {{ books[0] }}
             <input type="radio" id="book1" name="book"> {{ books[1] }}

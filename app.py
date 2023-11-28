@@ -6,7 +6,8 @@ from sqlalchemy.exc import IntegrityError
 import pdb
 
 from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm, BookRecommendationBySubjectForm
-from models import db, connect_db, Book, User
+from models import db, connect_db, Book
+#, User
 
 CURR_USER_KEY = "curr_user"
 # https://openlibrary.org/search.json?q=the+lord+of+the+rings
@@ -71,7 +72,7 @@ def add_user_to_g():
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
 
-def do_login():
+def do_login(user):
     """login user."""
     session[CURR_USER_KEY] = user.id
 
@@ -83,17 +84,17 @@ def do_logout():
 ################ ROUTES ################
 ########################################
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    ## TO DO
+# @app.route("/signup", methods=["GET", "POST"])
+# def signup():
+#     ## TO DO
+ 
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     ## TO DO
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    ## TO DO
-
-@app.route("/logout", methods=["GET", "POST"])
-def logout():
-    ## TO DO
+# @app.route("/logout", methods=["GET", "POST"])
+# def logout():
+#     ## TO DO
 
 ########################################
 ################ ROUTES ################
