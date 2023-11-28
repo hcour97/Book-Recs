@@ -6,15 +6,13 @@ from sqlalchemy.exc import IntegrityError
 import pdb
 
 from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm, BookRecommendationBySubjectForm
-from models import db, connect_db, Book
-#, User
+from models import db, connect_db, Book, User
 
 CURR_USER_KEY = "curr_user"
 # https://openlibrary.org/search.json?q=the+lord+of+the+rings
 BASE_URL = "https://openlibrary.org/search.json?"
 
 app = Flask(__name__)
-# app.app_context().push()
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
@@ -37,7 +35,6 @@ def get_subject(book_name):
     query_book = query_book.replace(' ', '+')
     resp = requests.get(f"https://openlibrary.org/search.json?title={query_book}")
     info = resp.json()
-    ## TO DO: THROW AN ERROR IF NO COMMON SUBJECTS
     try:
         subjects = info['docs'][0]['subject']
         return subjects
@@ -84,17 +81,51 @@ def do_logout():
 ################ ROUTES ################
 ########################################
 
-# @app.route("/signup", methods=["GET", "POST"])
-# def signup():
-#     ## TO DO
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    """Handle new user signup. Create a new User and add to db. 
+        Redirect to their reading list."""
+    form = UserAddForm()
+    if form.validate_on_submit():
+        try: 
+            user = User.signup(
+                username = form.username.data,
+                password = form.password.data,
+                email=form.password.data,
+            )
+            db.session.commit()
+        except IntegrityError:
+            flash("Username already taken", "danger")
+            return render_template('users/signup.html', form=form)
+        
+        do_login(user)
+        return redirect("/")
+    else:
+        return render_template('users/signup.html', form=form)
  
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     ## TO DO
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Handle existing user login."""
+    form = LoginForm()
+    if form.validate_on_submit():
+        user=User.authenticate(form.username.data, form.password.data)
 
-# @app.route("/logout", methods=["GET", "POST"])
-# def logout():
-#     ## TO DO
+        if user:
+            do_login(user)
+            flash(f"Hello, {user.username}!", "success")
+            return redirect("/")
+        
+        else:
+            flash("Invalid credentials. Please try again.", "danger")
+    
+    return render_template("users/login.html", form=form)
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    """Handle existing user logout."""
+    do_logout()
+    flash("User successfully logged out.")
+    return redirect("/login")
 
 ########################################
 ################ ROUTES ################
@@ -102,7 +133,7 @@ def do_logout():
 
 @app.route("/", methods=["GET"])
 def homepage():
-    """Homepage that displays books the user has read."""
+    """Homepage that displays books the user would like to read."""
     books = Book.query.all()
     return render_template("users_books.html", books=books)
 
