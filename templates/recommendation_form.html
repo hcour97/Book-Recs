@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<script>
+    $('.btn').on('click', function () {
+    var $this = $(this);
+    $this.button('loading');
+    setTimeout(function() {
+        $this.button('reset');
+    }, 8000)
+});
+</script>
+
 <h1>Enter 2 books to get a recommendation:<h1></h1>
 <form method="POST">
     {{ form.hidden_tag() }}
@@ -15,10 +25,10 @@
         {% endfor %}
     </p>
     {% endfor %}
-
-    <button class="btn btn-success" type="submit" onclick="this.classList.toggle('spinner-border spinner-border-sm')"> Get Recommendation!
-        <!-- <span onclick="this.classList.toggle('spinner-border spinner-border-sm')"></span> -->
+  
+    <button class="btn btn-success" type="submit" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Finding Books"> Get Recommendation!
     </button>
+
 
     <!-- <button class="btn btn-success" type="submit">Get recommendation</button> -->
     <!-- <button class="btn btn-primary" type="button" disabled>

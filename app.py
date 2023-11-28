@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 import pdb
 
 from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm, BookRecommendationBySubjectForm
-from models import db, connect_db, Book
+from models import db, connect_db, Book, User
 
 CURR_USER_KEY = "curr_user"
 # https://openlibrary.org/search.json?q=the+lord+of+the+rings
@@ -62,6 +62,38 @@ def get_books(subject_name):
         book = info['docs'][i]['title']
         books.append(book)
     return books
+
+################## USE Flask's g object to store data during running web app #########
+
+@app.before_request
+def add_user_to_g():
+    """If logged in, add current user to Flask Global."""
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+
+def do_login():
+    """login user."""
+    session[CURR_USER_KEY] = user.id
+
+def do_logout():
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
+########################################
+################# USER #################
+################ ROUTES ################
+########################################
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    ## TO DO
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    ## TO DO
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    ## TO DO
 
 ########################################
 ################ ROUTES ################
@@ -123,7 +155,7 @@ def book_recommender():
                 # book = Book(title=book_title.data) ## not actually saving to the db.
                 books.append(book_title)
                 i+=1
-        
+            # return redirect("/book-recs/add")
             return render_template("recommendation_results.html", form=form, books=books, subject=subject)
         except:
             return render_template("error_recommendations.html")
