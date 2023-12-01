@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<script>
+<!-- <script>
     $('.btn').on('click', function () {
     var $this = $(this);
     $this.button('loading');
@@ -9,15 +9,38 @@
         $this.button('reset');
     }, 8000)
 });
-</script>
+</script> -->
 
-<h1>Enter 2 books to get a recommendation:<h1></h1>
+<script type="text/javascript">// <![CDATA[
+    function loading(){
+        $("#loading").show(); // not showing 
+        $("#content").hide(); // working - removing the form while processing request       
+    }
+// ]]></script>
+
+<style>
+    div#loading {
+    /* justify-content: center;
+    align-items: center; */
+    width: 500px;
+    height: 250px;
+    display: none;
+    background: url(static/Ybin.gif) no-repeat;
+    cursor: wait; 
+    }
+</style>
+
+<div id="loading" class="justify-content-center">
+    <h1>Finding Books ... </h1>
+</div>
+<div id="content">
+<h1>Enter 2 books to get a recommendation:<h1>
 <form method="POST">
     {{ form.hidden_tag() }}
     {% for field in form
     if field.widget.input_type != 'hidden' %}
     <p>
-        {{ field.label }}
+       <h4>{{ field.label }}</h4>
         {{ field(class_="form-control") }}
 
         {% for error in field.errors %}
@@ -25,9 +48,10 @@
         {% endfor %}
     </p>
     {% endfor %}
-  
-    <button class="btn btn-success" type="submit" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Finding Books"> Get Recommendation!
+    
+    <button class="btn btn-success" type="submit" value="submit" onclick="loading();"> Get Recommendation!
     </button>
+    </div>
 
 
     <!-- <button class="btn btn-success" type="submit">Get recommendation</button> -->

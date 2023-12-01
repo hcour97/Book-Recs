@@ -5,8 +5,8 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from sqlalchemy.exc import IntegrityError
 import pdb
 
-from forms import AddBookForm, CommonSubjectsForm, BookRecommendationForm, BookRecommendationBySubjectForm
-from models import db, connect_db, Book, User
+from forms import AddBookForm, BookRecommendationForm
+from models import db, connect_db, Book
 
 CURR_USER_KEY = "curr_user"
 # https://openlibrary.org/search.json?q=the+lord+of+the+rings
@@ -63,69 +63,69 @@ def get_books(subject_name):
 
 ################## USE Flask's g object to store data during running web app #########
 
-@app.before_request
-def add_user_to_g():
-    """If logged in, add current user to Flask Global."""
-    if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+# @app.before_request
+# def add_user_to_g():
+#     """If logged in, add current user to Flask Global."""
+#     if CURR_USER_KEY in session:
+#         g.user = User.query.get(session[CURR_USER_KEY])
 
-def do_login(user):
-    """login user."""
-    session[CURR_USER_KEY] = user.id
+# def do_login(user):
+#     """login user."""
+#     session[CURR_USER_KEY] = user.id
 
-def do_logout():
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
+# def do_logout():
+#     if CURR_USER_KEY in session:
+#         del session[CURR_USER_KEY]
 ########################################
 ################# USER #################
 ################ ROUTES ################
 ########################################
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    """Handle new user signup. Create a new User and add to db. 
-        Redirect to their reading list."""
-    form = UserAddForm()
-    if form.validate_on_submit():
-        try: 
-            user = User.signup(
-                username = form.username.data,
-                password = form.password.data,
-                email=form.password.data,
-            )
-            db.session.commit()
-        except IntegrityError:
-            flash("Username already taken", "danger")
-            return render_template('users/signup.html', form=form)
+# @app.route("/signup", methods=["GET", "POST"])
+# def signup():
+#     """Handle new user signup. Create a new User and add to db. 
+#         Redirect to their reading list."""
+#     form = UserAddForm()
+#     if form.validate_on_submit():
+#         try: 
+#             user = User.signup(
+#                 username = form.username.data,
+#                 password = form.password.data,
+#                 email=form.password.data,
+#             )
+#             db.session.commit()
+#         except IntegrityError:
+#             flash("Username already taken", "danger")
+#             return render_template('users/signup.html', form=form)
         
-        do_login(user)
-        return redirect("/")
-    else:
-        return render_template('users/signup.html', form=form)
+#         do_login(user)
+#         return redirect("/")
+#     else:
+#         return render_template('users/signup.html', form=form)
  
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Handle existing user login."""
-    form = LoginForm()
-    if form.validate_on_submit():
-        user=User.authenticate(form.username.data, form.password.data)
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     """Handle existing user login."""
+#     form = UserLoginForm()
+#     if form.validate_on_submit():
+#         user=User.authenticate(form.username.data, form.password.data)
 
-        if user:
-            do_login(user)
-            flash(f"Hello, {user.username}!", "success")
-            return redirect("/")
+#         if user:
+#             do_login(user)
+#             flash(f"Hello, {user.username}!", "success")
+#             return redirect("/")
         
-        else:
-            flash("Invalid credentials. Please try again.", "danger")
+#         else:
+#             flash("Invalid credentials. Please try again.", "danger")
     
-    return render_template("users/login.html", form=form)
+#     return render_template("users/login.html", form=form)
 
-@app.route("/logout", methods=["GET", "POST"])
-def logout():
-    """Handle existing user logout."""
-    do_logout()
-    flash("User successfully logged out.")
-    return redirect("/login")
+# @app.route("/logout", methods=["GET", "POST"])
+# def logout():
+#     """Handle existing user logout."""
+#     do_logout()
+#     flash("User successfully logged out.")
+#     return redirect("/login")
 
 ########################################
 ################ ROUTES ################
