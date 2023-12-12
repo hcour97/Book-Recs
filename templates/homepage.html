@@ -1,15 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+ <h2>Welcome</h2>
 
-<h1> Your Reading List:</h1>
-    {% for book in books %}
-    <h4>
-        {{ book.title }} <a href="/delete/{{ book.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
-    </h4>
-
-    {% endfor %}
-<div class="btn-group" role="group" aria aria-label="Basic example">
+ <!-- could put like a fun 'book of the day' on the front page -->
+ <div class="btn-group" role="group" aria aria-label="Basic example">
     <button type="button" class="btn btn-info" onclick="window.location.href='book-recs/add'">Add Book</button>
     <button type="button" class="btn btn-info" onclick="window.location.href='book-recs'">Get Recommendation</button>
 </div>
