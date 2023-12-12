@@ -19,6 +19,12 @@
     <!-- <link rel="stylesheet" href="/static/stylesheets/style.css"> -->
     <link rel="shortcut icon" href="/static/favicon.ico">
 </head>
+<style>
+    body {
+        background-image: url("/static/whitebrick.png");
+        background-repeat: repeat;
+    }
+</style>
 <body> 
 <div class="container">
     <nav class="navbar navbar-light navbar-expand-lg bg-light">
@@ -45,17 +51,17 @@
     id="navbarNav">
     <ul class="navbar-nav">
         <li class="nav-item active">
-            <a href="#" class="nav-link active">
+            <a href="/users/{{ g.user.id }}" class="nav-link active">
                 Home
             </a>
         </li>
         <li class="nav-item active">
-            <a href="#" class="nav-link active">
+            <a href="/books/add" class="nav-link active">
                 Add Book
             </a>
         </li>
         <li class="nav-item active">
-            <a href="#" class="nav-link active">
+            <a href="/book-recs/new" class="nav-link active">
                 Find Book
             </a>
         </li>
@@ -63,7 +69,7 @@
 
     </div>
     </nav>
-    <!-- <div class="text-center"> -->
+    <div class="text-center">
         {% block content %}
         {% endblock %}
     </div>

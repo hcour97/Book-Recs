@@ -226,8 +226,7 @@ def homepage():
 
     if g.user: 
         books = Book.query.all()
-        # user = user.query.get_or_404(user_id)
-        return render_template("homepage.html", books=books)
+        return render_template("homepage.html")
     
     else:
         return render_template("home-anon.html")
