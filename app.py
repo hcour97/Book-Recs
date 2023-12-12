@@ -118,7 +118,7 @@ def login():
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
-            return redirect("/")
+            return redirect(f"/users/{ user.id }")
         
         else:
             flash("Invalid credentials. Please try again.", "danger")
@@ -136,7 +136,7 @@ def logout():
 ################ ROUTES ################
 ########################################
 
-@app.route("/book-recs/add", methods=["GET", "POST"])
+@app.route("/books/add", methods=["GET", "POST"])
 def manually_add_book():
     """Allows logged-in user to manually add a book to their list."""
 
@@ -149,12 +149,9 @@ def manually_add_book():
         book = Book(title=form.title.data) # create with Book model
         g.user.books.append(book) # add book to g.user session
 
-        # db.session.add(book) # add book to session
         db.session.commit() # add to db
         
-        ## not working
-        flash(f"Success, ${book.title} was added to your list.", 'success') 
-        return redirect("/users/{g.user.id}")
+        return redirect(f"/users/{g.user.id}")
     return render_template("add_book_form.html", form=form)
 
 @app.route("/book-recs/new", methods = ["GET", "POST"])
@@ -189,7 +186,6 @@ def add_book_recs():
                 # book = Book(title=book_title.data) ## not actually saving to the db.
                 books.append(book_title)
                 i+=1
-            # return redirect("/book-recs/add")
             return render_template("recommendation_results.html", form=form, books=books, subject=subject)
         except:
             return render_template("error_recommendations.html")
@@ -197,7 +193,8 @@ def add_book_recs():
 
 @app.route("/users/<int:user_id>", methods=["GET"])
 def show_books(user_id):
-    """Display the users to-read list."""
+    """Display the logged-in users to-read list."""
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -205,6 +202,20 @@ def show_books(user_id):
     user = User.query.get_or_404(user_id)
     books = user.books
     return render_template("users/books.html", user=user, books=books)
+
+@app.route('/books/<int:book_id>/delete', methods=["GET","POST"])
+def delete_book(book_id):
+    """Deletes a book. """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    book_to_delete = Book.query.get(book_id)
+    db.session.delete(book_to_delete)
+    db.session.commit()
+
+    return redirect(f"/users/{g.user.id}")
 
 @app.route("/")
 def homepage():
@@ -247,15 +258,15 @@ def homepage():
 #         return redirect('/')
 #     return render_template("add_book_form.html", form=form)
 
-@app.route('/delete/<int:book_id>', methods=["GET","POST"])
-def delete_book(book_id):
-    book_to_delete = Book.query.get_or_404(book_id)
-    try:
-        db.session.delete(book_to_delete)
-        db.session.commit()
-        return redirect("/")
-    except:
-        return "Sorry. Cannot delete that book."
+# @app.route('/delete/<int:book_id>', methods=["GET","POST"])
+# def delete_book(book_id):
+#     book_to_delete = Book.query.get_or_404(book_id)
+#     try:
+#         db.session.delete(book_to_delete)
+#         db.session.commit()
+#         return redirect("/")
+#     except:
+#         return "Sorry. Cannot delete that book."
 
 @app.route("/book-recs", methods=["GET", "POST"])
 def book_recommender():

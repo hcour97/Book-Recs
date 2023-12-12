@@ -4,13 +4,13 @@
 <h1> Your Reading List:</h1>
     {% for book in books %}
     <h4>
-        {{ book.title }} <a href="/delete/{{ book.id }}" class="btn btn-outline-danger btn-sm">Delete</a>
+        {{ book.title }} <a href="/books/{{ book.id }}/delete" class="btn btn-outline-danger btn-sm">Delete</a>
     </h4>
 
     {% endfor %}
 <div class="btn-group" role="group" aria aria-label="Basic example">
-    <button type="button" class="btn btn-info" onclick="window.location.href='form'">Add Book</button>
-    <button type="button" class="btn btn-info" onclick="window.location.href='book-recs'">Get Recommendation</button>
+    <button type="button" class="btn btn-info" onclick="window.location.href='/books/add'">Add Book</button>
+    <button type="button" class="btn btn-info" onclick="window.location.href='/book-recs/new'">Get Recommendation</button>
 </div>
 
 {% endblock %}

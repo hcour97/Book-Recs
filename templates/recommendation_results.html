@@ -11,7 +11,8 @@
         </h4>
     {% endfor %} -->
 
-    <form action="/book-recs/add" method="POST">
+    <form action="/users/{{ g.user.id }}" method="GET" method="POST">
+        <!-- ok so it reads the g.user.id correctly, but gives error of "Method Not Allowed". -->
         {% for book in books %}
             <input type="radio" id="{{ book }}"" value="{{ book }}"" name="book"> {{ book }}</input><br>
         {% endfor %}
