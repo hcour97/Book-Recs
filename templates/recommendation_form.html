@@ -18,6 +18,10 @@ $("#loading").hide() // <![CDATA[
     display: none;
     cursor: wait; 
     }
+
+    .btn {
+        background-color:#59a985;
+    }
 </style>
 
 <div class="row justify-content-md-center">
@@ -47,7 +51,7 @@ $("#loading").hide() // <![CDATA[
         </p>
         {% endfor %}
         
-        <button class="btn btn-success" type="submit" value="submit" onclick="loading();"> Get Recommendations!
+        <button class="btn-green" type="submit" value="submit" onclick="loading();"> Get Recommendations!
         </button>
         </div>
     </form>
