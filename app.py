@@ -96,15 +96,16 @@ def signup():
             user = User.signup(
                 username = form.username.data,
                 password = form.password.data,
-                email=form.password.data,
+                email=form.email.data,
             )
             db.session.commit()
+
         except IntegrityError:
             flash("Username already taken", "danger")
             return render_template('users/signup.html', form=form)
         
         do_login(user)
-        return redirect("/")
+        return redirect(f"/users/{user.id}")
     else:
         return render_template('users/signup.html', form=form)
  
