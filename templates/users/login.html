@@ -1,12 +1,57 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommender</title>
 
-<!-- {% block body_class %}onboarding{% endblock %} -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/popper"></script>
+    <script src="https://unpkg.com/bootstrap"></script>
 
-{% block content %}
+    <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <!-- <link rel="stylesheet" href="/static/stylesheets/style.css"> -->
+    <link rel="shortcut icon" href="/static/favicon.ico">
+</head>
+<style>
+    * {
+        font-size: 100%;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+    body {
+        background-image: url("/static/whitebrick.png");
+        background-repeat: repeat;
+    }
 
-  <div class="row justify-content-md-center">
+    .btn-green {
+        background-color: #59a985;
+        color: whitesmoke;
+        border-radius: 12px;
+    }
+
+    .btn btn-danger {
+        background-color: #e6d3a7;
+    }
+
+</style>
+
+<body> 
+<div class="container">
+
+  {% for category, message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+
+  <div class="row justify-content-md-center align-items-md-center">
     <div class="col-md-7 col-lg-5">
-      <h2 class="join-message">Welcome back.</h2>
+      <!-- <img src="https://image.similarpng.com/very-thumbnail/2020/09/Funny-cartoon-book-Premium-vector-PNG.png"> -->
+      <h2 class="join-message">Welcome back to BookRecs.</h2>
 
       <form method="POST" id="user_form">
         {{ form.hidden_tag() }}
@@ -18,9 +63,7 @@
           {{ field(placeholder=field.label.text, class="form-control") }}
         {% endfor %}
 
-        <button class="btn btn-primary btn-block btn-lg">Log in</button>
+        <button class="btn-green">Log in</button>
       </form>
     </div>
   </div>
-
-{% endblock %}

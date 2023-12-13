@@ -9,7 +9,7 @@
     <link rel="stylesheet"
         href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script> -->
+    <script src="script.js"></script>
     <script src="https://unpkg.com/jquery"></script>
     <script src="https://unpkg.com/popper"></script>
     <script src="https://unpkg.com/bootstrap"></script>
@@ -33,6 +33,11 @@
         background-color: #59a985;
         color: whitesmoke;
         border-radius: 12px;
+        font-size: 18px;
+        padding: 2%;
+        width: auto;
+        height: auto;
+
     }
 
     .btn btn-danger {
@@ -44,7 +49,7 @@
 <div class="container">
     <nav class="navbar navbar-light navbar-expand-lg bg-light">
         <a
-        href="#" 
+        href="/users/{{g.user.id}}" 
         class="navbar-brand mb-0 h1">
         <img 
         class="d-inline-block align-top"
@@ -66,7 +71,7 @@
     id="navbarNav">
     <ul class="navbar-nav">
         <li class="nav-item active">
-            <a href="/users/{{ g.user.id }}" class="nav-link active">
+            <a href="/users/{{g.user.id}}" class="nav-link active">
                 Home
             </a>
         </li>
@@ -80,14 +85,24 @@
                 Find Book
             </a>
         </li>
+        <li class="nav-item active justify-content-end">
+            <a href="/logout" class="nav-link active">
+                Logout
+            </a>
+        </li>
     </ul>
 
     </div>
     </nav>
-    <div class="text-center">
+    <div class="container text-center">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      
         {% block content %}
         {% endblock %}
-    </div>
+      
+      </div>
 </div>
 </body>
 </html>
