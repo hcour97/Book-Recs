@@ -200,11 +200,12 @@ def show_books(user_id):
         flash("Access unauthorized.", "danger")
         return redirect(f"/users/{g.user.id}")
 
-    book = request.args.get("book")
-    book_to_add = Book(title=book) 
-    g.user.books.append(book_to_add)
+    if request.args:
+        book = request.args.get("book")
+        book_to_add = Book(title=book) 
+        g.user.books.append(book_to_add)
 
-    db.session.commit()
+        db.session.commit()
 
     user = User.query.get_or_404(user_id)
     books = user.books

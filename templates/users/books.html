@@ -3,14 +3,15 @@
 {% block content %}
 <h1> {{ user.username }}'s Reading List:</h1>
     {% for book in books %}
-    <h4>
-        {{ book.title }} <a href="/books/{{ book.id }}/delete" class="btn btn-outline-danger btn-sm">Delete</a>
-    </h4>
+    <ul>
+        <li>
+            <h4>
+                {{ book.title }} <a href="/books/{{ book.id }}/delete" class="btn btn-outline-danger btn-sm">Remove</a>
+            </h4>
+        </li>
+
+    </ul>
 
     {% endfor %}
-<div class="btn-group" role="group" aria aria-label="Basic example">
-    <button type="button" class="btn-green" onclick="window.location.href='/books/add'">Add Book</button>
-    <button type="button" class="btn-green" onclick="window.location.href='/book-recs/new'">Get Recommendation</button>
-</div>
 
 {% endblock %}

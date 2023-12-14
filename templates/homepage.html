@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
- <h2>Welcome back, {{g.user.username}}</h2>
+ <h1>Welcome back, {{g.user.username}}</h1>
 
- <!-- could put like a fun 'book of the day' on the front page -->
- <div class="btn-group" role="group" aria aria-label="Basic example">
-
-    <button type="button" class="btn-green" onclick="window.location.href='login'">Login</button>
-    <button type="button" class="btn-green" onclick="window.location.href='signup'">Signup</button>
-</div>
 
 {% endblock %}

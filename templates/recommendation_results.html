@@ -2,24 +2,19 @@
 
 {% block content %}
 
-
-
 <h1> Books you may enjoy:</h1>
-    <!-- {% for book in books %}
-        <h4>
-            {{ book }} <a href="/book-recs/add/{{ book.id }}" class="btn btn-outline-success btn-sm">Add</a>
-        </h4>
-    {% endfor %} -->
 
-    <form action="/users/{{ g.user.id }}" method="POST">
+    <form action="/users/{{ g.user.id }}" method="GET">
         <!-- ok so it reads the g.user.id correctly, but gives error of "Method Not Allowed". -->
         {% for book in books %}
             <input type="radio" id="{{ book }}"" value="{{ book }}"" name="book"> {{ book }}</input><br>
         {% endfor %}
-
-        <button type="submit" class="btn-green">Add to Reading List</button>
+        <div class="btn-group" role="group" aria-label="button group">
+            <button type="submit" class="btn-green">Add to Reading List</button>
+            <button class="btn-green" onclick="window.location.href='book-recs'">Try Again</button>
+        </div>
     </form>
 
-    <button class="btn-green" onclick="window.location.href='book-recs'">Try Again</button>
+    
 
 {% endblock %}
