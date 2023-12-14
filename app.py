@@ -192,14 +192,20 @@ def add_book_recs():
             return render_template("error_recommendations.html")
     return render_template("recommendation_form.html", form=form)
 
-@app.route("/users/<int:user_id>", methods=["GET"])
+@app.route("/users/<int:user_id>", methods=["GET","POST"])
 def show_books(user_id):
     """Display the logged-in users to-read list."""
 
-    if not g.user:
+    if (g.user.id != user_id):
         flash("Access unauthorized.", "danger")
-        return redirect("/")
-    
+        return redirect(f"/users/{g.user.id}")
+
+    book = request.args.get("book")
+    book_to_add = Book(title=book) 
+    g.user.books.append(book_to_add)
+
+    db.session.commit()
+
     user = User.query.get_or_404(user_id)
     books = user.books
     return render_template("users/books.html", user=user, books=books)
@@ -230,89 +236,6 @@ def homepage():
     
     else:
         return render_template("home-anon.html")
-
-
-
-
-
-##### PREVIOUS ROUTES #####
-
-# @app.route("/", methods=["GET"])
-# def homepage():
-#     """Homepage that displays books the user would like to read."""
-#     books = Book.query.all()
-#     return render_template("users_books.html", books=books)
-
-# @app.route("/form", methods=["GET", "POST"])
-# def view_books():
-#     """Form for user to manually add books to their read-list."""
-#     form = AddBookForm()
-#     if form.validate_on_submit():
-#         book = Book(title=form.title.data) # create with Book model
-
-#         db.session.add(book) # add book to session
-#         db.session.commit() # add to db
-        
-#         ## not working
-#         flash(f"Success, ${book.title} was added to your list.", 'success') 
-#         return redirect('/')
-#     return render_template("add_book_form.html", form=form)
-
-# @app.route('/delete/<int:book_id>', methods=["GET","POST"])
-# def delete_book(book_id):
-#     book_to_delete = Book.query.get_or_404(book_id)
-#     try:
-#         db.session.delete(book_to_delete)
-#         db.session.commit()
-#         return redirect("/")
-#     except:
-#         return "Sorry. Cannot delete that book."
-
-@app.route("/book-recs", methods=["GET", "POST"])
-def book_recommender():
-    """Form and results for user to receive book recommendations based off of two books they've read."""
-    form = BookRecommendationForm()
-    if form.validate_on_submit():
-        book1 = form.title1.data
-        book2 = form.title2.data
-        subj1 = get_subject(book1)
-        subj2 = get_subject(book2)
-    
-        try:
-            common_subjects = get_common_subjects(subj1, subj2)
-            subject = common_subjects[0]
-            query_subject = common_subjects[0].lower().replace(' ', '+')
-
-            resp = requests.get(f"https://openlibrary.org/search.json?subject={query_subject}")
-            info = resp.json()
-        
-            books = []
-            i = 0
-            while i <=5:
-                book_title = info['docs'][i]['title']
-                # book = Book(title=book_title.data) ## not actually saving to the db.
-                books.append(book_title)
-                i+=1
-            # return redirect("/book-recs/add")
-            return render_template("recommendation_results.html", form=form, books=books, subject=subject)
-        except:
-            return render_template("error_recommendations.html")
-    return render_template("recommendation_form.html", form=form)
-
-@app.route("/book-recs/add", methods=["GET", "POST"])
-def add_rec_book():
-    # how do I grab the text that is associated with that button???
-    book_title = request.form.get("book") # get the value of the radio button selected, returning "on" as book_title rn
-    print(book_title) # prints "on" as each book_title
-    book_to_add = Book(title=book_title) # create a book model
-
-    try: # add to db
-        db.session.add(book_to_add)
-        db.session.commit()
-        return redirect("/")
-    except:
-        return "Sorry. Cannot add that book."
-
 
 
 
