@@ -5,3 +5,15 @@ This project is an application designed for users to build a personalized readin
 
 ## API 
 [Open Source Library API](https://openlibrary.org/developers/api)
+
+## Features
+- Authentification and Authorization
+- Password Protection with Bcrypt 
+- WTForms
+- Flask
+- SQL and SQLAlchemy
+- Restful APIs 
+- Bootstrap
+
+## User Flow
+Login or Signup --> View and Edit Lists --> Add Book or Get Recommendation --> View Lists
