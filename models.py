@@ -1,5 +1,5 @@
 """SQLAlchemy models for Book Recommendations."""
-
+import os
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
@@ -11,6 +11,8 @@ def connect_db(app):
 
     You should call this in your Flask app.
     """
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SUPABASE_DATABASE_URL']
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
 
